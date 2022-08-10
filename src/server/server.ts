@@ -31,7 +31,15 @@ class App {
             socket.on('disconnect', function () {
                 console.log('socket disconnected : ' + socket.id)
             })
+
+            socket.on('message', function (message: any) {
+                console.log(message)
+            })
         })
+
+        setInterval(() => {
+            io.emit('random', Math.floor(Math.random() * 10))
+        }, 1000)
     }
 
     public Start() {
