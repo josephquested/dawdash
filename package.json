@@ -1,0 +1,28 @@
+{
+  "name": "dawdash",
+  "version": "1.0.0",
+  "description": "multiplayer music sequencer using typescript and sockets",
+  "scripts": {
+    "dev": "concurrently -k \"tsc -p ./src/server -w\" \"nodemon ./dist/server/server.js\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/josephquested/dawdash.git"
+  },
+  "author": "josephquested",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/josephquested/dawdash/issues"
+  },
+  "homepage": "https://github.com/josephquested/dawdash#readme",
+  "dependencies": {
+    "@types/node": "^18.6.5",
+    "@types/socket.io": "^3.0.2",
+    "socket.io": "^4.5.1"
+  },
+  "devDependencies": {
+    "concurrently": "^7.3.0",
+    "nodemon": "^2.0.19"
+  }
+}
