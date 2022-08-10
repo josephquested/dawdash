@@ -1,4 +1,6 @@
+import express from 'express'
 import http from 'http'
+import path from 'path'
 import socketIO from 'socket.io'
 
 const port: number = 3000
@@ -10,13 +12,20 @@ class App {
     constructor(port: number) {
         this.port = port
 
-        this.server = new http.Server()
+        const app = express()
+        app.use(express.static(path.join(__dirname, '../client')))
+
+        this.server = new http.Server(app)
         const io = new socketIO.Server(this.server)
+
+        io.on('connection', function (socket: socketIO.Socket) {
+            console.log('a user connected : ' + socket.id)
+        })
     }
 
     public Start() {
         this.server.listen(this.port, () => {
-            console.log(`listening on port ${this.port}..`)
+            console.log(`listening on port ${this.port}.`)
         })
     }
 }
