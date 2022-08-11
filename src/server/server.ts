@@ -6,10 +6,11 @@ import render from './render'
 import CellData from './celldata'
 import GameData from './gamedata'
 import generateCells from './generateCells'
+import Player from './player'
 
 const port: number = 3000
 
-let gameData: GameData = { rows: 10, cols: 10 }
+let gameData: GameData = { rows: 10, cols: 20 }
 let cellData: CellData[] = generateCells(gameData)
 
 class App {
@@ -28,6 +29,15 @@ class App {
         io.on('connection', function (socket: socketIO.Socket) {
             console.log('a user connected : ' + socket.id)
             
+            let player: Player = {
+                id: socket.id,
+                img: "",
+                dir: 0,
+                cell: cellData[6]
+            }
+
+            cellData[6].player = player
+
             let html = render(cellData, gameData)
             socket.emit('render', html)
             
@@ -54,7 +64,7 @@ class App {
 
     public Start() {
         this.server.listen(this.port, () => {
-            console.log(`listening on port ${this.port}.`)
+            console.log(`listening on port ${this.port}`)
         })
     }
 }
