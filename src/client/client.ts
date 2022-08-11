@@ -9,22 +9,26 @@ class Client {
             document.body.innerHTML = ''
         })
 
-        this.socket.on('disconnect', function (message: any) {
-            console.log('disconnect ' + message)
-            document.body.innerHTML += 'Disconnected from Server : ' + message + '<br/>'
-            // location.reload();
+        this.socket.on('render', (html: string) => {
+            document.body.innerHTML = html
         })
 
-        this.socket.on('message', (message: any) => {
-            console.log(message)
-            document.body.innerHTML += message + '<br/>'
-            this.socket.emit('message', 'Thanks for having me')
-        })
+        // this.socket.on('disconnect', function (message: any) {
+        //     console.log('disconnect ' + message)
+        //     document.body.innerHTML += 'Disconnected from Server : ' + message + '<br/>'
+        //     // location.reload();
+        // })
 
-        this.socket.on('random', function (message: any) {
-            console.log(message)
-            document.body.innerHTML += message + '<br/>'
-        })
+        // this.socket.on('message', (message: any) => {
+        //     console.log(message)
+        //     document.body.innerHTML += message + '<br/>'
+        //     this.socket.emit('message', 'Thanks for having me')
+        // })
+
+        // this.socket.on('random', function (message: any) {
+        //     console.log(message)
+        //     document.body.innerHTML += message + '<br/>'
+        // })
     }
 }
 
