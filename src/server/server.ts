@@ -32,7 +32,7 @@ class App {
             let player: Player = {
                 id: socket.id,
                 img: "",
-                dir: 0,
+                dir: 3,
                 cell: cellData[6]
             }
 
