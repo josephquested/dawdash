@@ -40,15 +40,23 @@ class App {
             io.emit('render', render(cells, gameData))
             
             // shooting //
-            socket.on('shoot', function (dir: number) {
+            socket.on('shoot', (dir: number) => {
                 players[socket.id].dir = dir
                 io.emit('render', render(cells, gameData))
             })
             
             // moving //
-            socket.on('move', function (dir: number) {
+            socket.on('move', (dir: number) => {
                 let player : Player = players[socket.id]
                 attemptMovePlayer(player, dir)
+                io.emit('render', render(cells, gameData))
+            })
+
+            // disconnecting //
+            socket.on('disconnect', () => {
+                console.log('player disconnected : ' + socket.id)
+                players[socket.id].cell.player = null
+                players[socket.id] = null
                 io.emit('render', render(cells, gameData))
             })
         })
@@ -60,9 +68,6 @@ class App {
         //     'Everybody, say hello to ' + socket.id
         // )
 
-        // socket.on('disconnect', function () {
-        //     console.log('socket disconnected : ' + socket.id)
-        // })
 
         // setInterval(() => {
             //     io.emit('random', Math.floor(Math.random() * 10))
