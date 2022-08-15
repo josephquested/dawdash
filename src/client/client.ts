@@ -39,20 +39,35 @@ const client = new Client()
 
 // -- PLAYER CONTROLLER -- //
 
-document.onkeydown = checkKey;
+document.onkeydown = processPlayerInput;
 
-function checkKey(e : any) {
+function processPlayerInput(e : any) {
 
+    // shooting //
     if (e.keyCode == '38') {
-        client.socket.emit('move', 0)
+        client.socket.emit('shoot', 0)
     }
     else if (e.keyCode == '39') {
-        client.socket.emit('move', 1)
+        client.socket.emit('shoot', 1)
     }
     else if (e.keyCode == '40') {
-        client.socket.emit('move', 2)
+        client.socket.emit('shoot', 2)
     }
     else if (e.keyCode == '37') {
+        client.socket.emit('shoot', 3)
+    }
+
+    // moving //
+    if (e.keyCode === 87) {
+        client.socket.emit('move', 0)
+    }
+    else if (e.keyCode === 68) {
+        client.socket.emit('move', 1)
+    }
+    else if (e.keyCode === 83) {
+        client.socket.emit('move', 2)
+    }
+    else if (e.keyCode === 65) {
         client.socket.emit('move', 3)
     }
 }
