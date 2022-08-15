@@ -1,6 +1,9 @@
+// -- SOCKET INTERACTIONS -- //
+
 class Client {
-    private socket: SocketIOClient.Socket
-    
+    public socket: SocketIOClient.Socket
+    public function : any
+
     constructor() {
         this.socket = io()
 
@@ -33,3 +36,23 @@ class Client {
 }
 
 const client = new Client()
+
+// -- PLAYER CONTROLLER -- //
+
+document.onkeydown = checkKey;
+
+function checkKey(e : any) {
+
+    if (e.keyCode == '38') {
+        client.socket.emit('move', 0)
+    }
+    else if (e.keyCode == '39') {
+        client.socket.emit('move', 1)
+    }
+    else if (e.keyCode == '40') {
+        client.socket.emit('move', 2)
+    }
+    else if (e.keyCode == '37') {
+        client.socket.emit('move', 3)
+    }
+}

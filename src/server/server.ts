@@ -10,8 +10,11 @@ import Player from './player'
 
 const port: number = 3000
 
+// -- GAME SETUP -- //
+
 let gameData: GameData = { rows: 10, cols: 20 }
 let cellData: CellData[] = generateCells(gameData)
+let players = {}
 
 class App {
     private server: http.Server
@@ -29,17 +32,20 @@ class App {
         io.on('connection', function (socket: socketIO.Socket) {
             console.log('a user connected : ' + socket.id)
             
+            let randomIndex = getRandomInt(0, cellData.length)
+
             let player: Player = {
                 id: socket.id,
                 img: "",
-                dir: 3,
-                cell: cellData[6]
+                dir: 0,
+                cell: cellData[randomIndex]
             }
 
-            cellData[6].player = player
+            players[player.id] = player
+            cellData[randomIndex].player = players[player.id]
 
             let html = render(cellData, gameData)
-            socket.emit('render', html)
+            io.emit('render', html)
             
             // socket.emit('message', 'Hello ' + socket.id)
 
@@ -52,9 +58,11 @@ class App {
             //     console.log('socket disconnected : ' + socket.id)
             // })
 
-            // socket.on('message', function (message: any) {
-            //     console.log(message)
-            // })
+            socket.on('move', function (dir: number) {
+                players[socket.id].dir = dir
+                let html = render(cellData, gameData)
+                io.emit('render', html)
+            })
         })
 
         // setInterval(() => {
@@ -70,3 +78,11 @@ class App {
 }
 
 new App(port).Start()
+
+// util //
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+}
