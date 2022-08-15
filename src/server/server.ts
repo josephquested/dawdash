@@ -43,24 +43,30 @@ class App {
             
             // shooting //
             socket.on('shoot', (dir: number) => {
-                players[socket.id].dir = dir
-                attemptShoot(players[socket.id], dir)
-                io.emit('render', render(cells, gameData))
+                if (players[socket.id] != null) {
+                    players[socket.id].dir = dir
+                    attemptShoot(players[socket.id], dir)
+                    io.emit('render', render(cells, gameData))
+                }
             })
             
             // moving //
             socket.on('move', (dir: number) => {
-                let player : Player = players[socket.id]
-                attemptMovePlayer(player, dir)
-                io.emit('render', render(cells, gameData))
+                if (players[socket.id] != null) {
+                    let player : Player = players[socket.id]
+                    attemptMovePlayer(player, dir)
+                    io.emit('render', render(cells, gameData))
+                }
             })
 
             // disconnecting //
             socket.on('disconnect', () => {
-                console.log('player disconnected: ' + socket.id)
-                players[socket.id].cell.player = null
-                players[socket.id] = null
-                io.emit('render', render(cells, gameData))
+                if (players[socket.id] != null) {
+                    console.log('player disconnected: ' + socket.id)
+                    players[socket.id].cell.player = null
+                    delete players[socket.id]
+                    io.emit('render', render(cells, gameData))
+                }
             })
         })
         
@@ -149,6 +155,8 @@ function processLaserMovement() {
                 laser.cell = nextCell
                 nextCell.laser = laser
 
+                checkForLaserPlayerCollision(laser.cell)
+
             } else {
                 destroyLaserInCell(laser, laser.cell)
                 destroyLaserInCell(nextCell.laser, nextCell)
@@ -160,11 +168,24 @@ function processLaserMovement() {
     })
 }
 
+function checkForLaserPlayerCollision(cell : CellData) {
+
+    if (cell.player != null && cell.laser != null) {
+        destroyLaserInCell(cell.laser, cell)
+        destroyPlayerInCell(cell.player, cell)
+    }
+}
+
 function destroyLaserInCell(laser : Laser, cell : CellData) {
     cell.laser = null
     let index : number = lasers.indexOf(laser);
     if (index > -1)
         lasers.splice(index, 1)
+}
+
+function destroyPlayerInCell(player : Player, cell : CellData) {
+    delete players[player.id]
+    cell.player = null
 }
 
 // -- UTIL -- //
