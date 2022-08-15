@@ -8,14 +8,16 @@ import GameData from './gamedata'
 import generateCells from './generateCells'
 import getCellFromDir from './getCellFromDir'
 import Player from './player'
+import Laser from './laser'
 
 const port: number = 3000
 
 // -- GAME SETUP -- //
 
-let gameData: GameData = { rows: 10, cols: 20 }
+let gameData: GameData = { rows: 10, cols: 20, tickspeed: 100 }
 let cells: CellData[] = generateCells(gameData)
 let players = {}
+let lasers : Laser[] = []
 
 class App {
     private server: http.Server
@@ -42,6 +44,7 @@ class App {
             // shooting //
             socket.on('shoot', (dir: number) => {
                 players[socket.id].dir = dir
+                attemptShoot(players[socket.id], dir)
                 io.emit('render', render(cells, gameData))
             })
             
@@ -61,9 +64,10 @@ class App {
             })
         })
         
-        // setInterval(() => {
-            //     io.emit('random', Math.floor(Math.random() * 10))
-            // }, 1000)
+        setInterval(() => {
+                processLaserMovement()
+                io.emit('render', render(cells, gameData))
+            }, gameData.tickspeed)
         }
         
     public Start() {
@@ -109,6 +113,58 @@ function attemptMovePlayer(player : Player, dir : number) {
         player.cell = nextCell
         player.cell.player = player
     }
+}
+
+// -- "Laser Beam" -- //
+
+function attemptShoot(player : Player, dir : number) {
+
+    let nextCell : CellData = getCellFromDir(dir, player.cell, cells, gameData)
+
+    if (nextCell != player.cell) {
+
+        let laser: Laser = {
+            img: "laser.png",
+            dir: dir,
+            cell: nextCell
+        }
+
+        nextCell.laser = laser
+        lasers.push(laser)
+    }
+}
+
+// -- TICK PHYSICS -- //
+
+function processLaserMovement() {
+
+    lasers.forEach(laser => {
+
+        let nextCell : CellData = getCellFromDir(laser.dir, laser.cell, cells, gameData)
+
+        if (nextCell != laser.cell) {
+
+            if (nextCell.laser == null) {
+                laser.cell.laser = null
+                laser.cell = nextCell
+                nextCell.laser = laser
+
+            } else {
+                destroyLaserInCell(laser, laser.cell)
+                destroyLaserInCell(nextCell.laser, nextCell)
+            }
+
+        } else {
+            destroyLaserInCell(laser, laser.cell)
+        }
+    })
+}
+
+function destroyLaserInCell(laser : Laser, cell : CellData) {
+    cell.laser = null
+    let index : number = lasers.indexOf(laser);
+    if (index > -1)
+        lasers.splice(index, 1)
 }
 
 // -- UTIL -- //

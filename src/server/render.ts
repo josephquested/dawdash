@@ -12,7 +12,7 @@ export default (cellData: CellData[], gameData: GameData) => {
         let tr : string = '<tr>'
 
         for (let j = 0; j < gameData.cols; j++) {
-            tr += `<td id="${j}-${i}">${j}-${i} ${fillCell(cellData[index])}</td>`
+            tr += `<td id="${j}-${i}">${fillCell(cellData[index])}</td>`
             index++
         }
 

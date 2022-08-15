@@ -9,7 +9,7 @@ export default (gameData: GameData) => {
 
         for (let j = 0; j < gameData.cols; j++) {
 
-            let cell: CellData = { x: j, y: i, player: null, hasLaser: false }
+            let cell: CellData = { x: j, y: i, player: null, laser: null }
             cells.push(cell)
         }
     }
