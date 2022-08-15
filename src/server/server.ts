@@ -35,7 +35,7 @@ class App {
         io.on('connection', function (socket: socketIO.Socket) {
 
             // spawning in new player  // 
-            console.log('a user connected : ' + socket.id)
+            console.log('player connected: ' + socket.id)
             spawnNewPlayer(socket)
             io.emit('render', render(cells, gameData))
             
@@ -54,21 +54,13 @@ class App {
 
             // disconnecting //
             socket.on('disconnect', () => {
-                console.log('player disconnected : ' + socket.id)
+                console.log('player disconnected: ' + socket.id)
                 players[socket.id].cell.player = null
                 players[socket.id] = null
                 io.emit('render', render(cells, gameData))
             })
         })
         
-        // socket.emit('message', 'Hello ' + socket.id)
-
-        // socket.broadcast.emit(
-        //     'message',
-        //     'Everybody, say hello to ' + socket.id
-        // )
-
-
         // setInterval(() => {
             //     io.emit('random', Math.floor(Math.random() * 10))
             // }, 1000)
