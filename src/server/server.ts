@@ -10,7 +10,7 @@ import getCellFromDir from './getCellFromDir'
 import Player from './player'
 import Laser from './laser'
 
-const port: number = 3000
+const port: any = process.env.PORT || 3000
 
 // -- GAME SETUP -- //
 
@@ -70,6 +70,7 @@ class App {
             })
         })
         
+        // tick cycle for physics events //
         setInterval(() => {
                 processLaserMovement()
                 io.emit('render', render(cells, gameData))
@@ -169,7 +170,6 @@ function processLaserMovement() {
 }
 
 function checkForLaserPlayerCollision(cell : CellData) {
-
     if (cell.player != null && cell.laser != null) {
         destroyLaserInCell(cell.laser, cell)
         destroyPlayerInCell(cell.player, cell)
